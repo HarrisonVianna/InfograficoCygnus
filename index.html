@@ -1,333 +1,181 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infográfico de Investimento - Projeto Cygnus</title>
-    
-    <!--
-        PLANNING & JUSTIFICATION COMMENTS
-
-        Source Material Analysis:
-        The primary source is the "Relatório de Análise de Investimento – Projeto Cygnus". It provides all necessary financial data: KPIs (VPL, TIR, Payback), CAPEX breakdown, OPEX details, revenue projections, cash flow, sensitivity, and Monte Carlo analysis results. The target audience is investors, requiring a professional and data-driven tone.
-
-        Infographic Narrative & Structure:
-        1.  **Hero Section:** Hook the audience with the project's title and the most compelling final KPIs (VPL, TIR, Payback).
-        2.  **The Opportunity:** Briefly explain what the project is and its core value proposition using a simple process flow diagram.
-        3.  **The Investment (CAPEX):** Detail the initial capital required using a donut chart for easy proportional understanding.
-        4.  **Revenue & Costs:** Showcase the diversified revenue streams and main operational costs. Use a stacked bar chart for revenue to show growth and composition, and a simple bar chart for OPEX.
-        5.  **Financial Trajectory:** Illustrate the project's long-term financial performance using a line chart for the Free Cash Flow, clearly showing the investment and recovery phases.
-        6.  **Risk Assessment:** Address potential investor concerns head-on with a sensitivity analysis (Tornado Chart) and the Monte Carlo simulation (Histogram + KPI).
-        7.  **Conclusion:** End with a strong concluding statement reinforcing the investment opportunity.
-
-        Visualization Selection & Justification (Confirming NO SVG / NO MERMAID JS):
-        - **KPIs (VPL, TIR):** Single Big Numbers (HTML/CSS). Goal: Inform. Method: High-impact text for immediate comprehension.
-        - **Process Flow:** HTML/CSS Diagram. Goal: Organize. Method: Styled divs and arrows using Tailwind CSS borders to create a flowchart without using SVG or Mermaid JS, as required.
-        - **CAPEX Breakdown:** Donut Chart (Chart.js/Canvas). Goal: Compare. Method: Ideal for showing part-to-whole relationships.
-        - **Revenue Projections:** Stacked Bar Chart (Chart.js/Canvas). Goal: Change/Compare. Method: Shows both total revenue growth over time and the contribution of each product line.
-        - **OPEX Breakdown:** Bar Chart (Chart.js/Canvas). Goal: Compare. Method: Simple and effective for comparing the magnitude of discrete cost categories.
-        - **Free Cash Flow:** Line Chart (Chart.js/Canvas). Goal: Change. Method: Best for visualizing trends over a long period.
-        - **Sensitivity Analysis:** Horizontal Bar Chart (Chart.js/Canvas). Goal: Relationships/Compare. Method: Creates a "Tornado Chart" effect, which is the standard and most intuitive way to display sensitivity.
-        - **Monte Carlo:** Histogram (Chart.js/Canvas) & Big Number (HTML/CSS). Goal: Relationships/Inform. Method: A histogram is the correct visualization for a probability distribution, and the big number highlights the key success probability.
-
-        CRITICAL OUTPUT CONSTRAINT CONFIRMATION:
-        - NEITHER Mermaid JS NOR SVG were used in this output. All diagrams are created with either Chart.js on a Canvas element or with structured HTML and Tailwind CSS.
-    -->
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Análise de Sensibilidade - Projeto Cygnus</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-        }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Teko:wght@600&display=swap');
-        h1, h2, h3, .kpi-value, .kpi-title {
-            font-family: 'Teko', sans-serif;
-            letter-spacing: 0.05em;
+            background-color: #f8fafc; /* cinza claro */
         }
         .chart-container {
             position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
+            margin: auto;
+            height: 80vh;
+            width: 90vw;
+            max-width: 1200px;
         }
     </style>
 </head>
-<body class="text-slate-700">
+<body class="p-4 sm:p-8">
 
-    <!-- HERO SECTION -->
-    <section class="min-h-screen bg-slate-900 text-white flex flex-col justify-center items-center text-center p-8 bg-cover bg-center" style="background-image: linear-gradient(rgba(18, 24, 38, 0.85), rgba(18, 24, 38, 0.85)), url('https://images.unsplash.com/photo-1627992938162-4467595773ae?q=80&w=2070&auto=format&fit=crop');">
-        <h1 class="text-7xl md:text-9xl font-bold uppercase">Projeto Cygnus</h1>
-        <p class="text-xl md:text-2xl text-blue-300 mt-2 max-w-3xl">Uma análise de investimento em energia renovável, demonstrando um projeto viável e de alto impacto.</p>
-        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
-            <div class="bg-white/10 p-6 rounded-lg backdrop-blur-sm border border-white/20">
-                <p class="kpi-title text-3xl text-blue-300">VPL</p>
-                <p class="kpi-value text-6xl text-white">+ R$ 4,35 M</p>
-            </div>
-            <div class="bg-white/10 p-6 rounded-lg backdrop-blur-sm border border-white/20">
-                <p class="kpi-title text-3xl text-green-300">TIR</p>
-                <p class="kpi-value text-6xl text-white">25,78%</p>
-            </div>
-            <div class="bg-white/10 p-6 rounded-lg backdrop-blur-sm border border-white/20">
-                <p class="kpi-title text-3xl text-amber-300">Payback Descontado</p>
-                <p class="kpi-value text-6xl text-white">15 Anos</p>
-            </div>
+    <div class="max-w-5xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Análise de Sensibilidade do Projeto</h1>
+            <p class="text-gray-600 mt-2">VPL e TIR vs. Preço de Venda do Metano ($CH_4$)</p>
         </div>
-        <div class="absolute bottom-8 animate-bounce">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-        </div>
-    </section>
-
-    <main class="w-full bg-slate-50">
-        <!-- THE OPPORTUNITY SECTION -->
-        <section class="py-16 md:py-24 px-8 max-w-7xl mx-auto">
-            <div class="text-center max-w-3xl mx-auto">
-                <h2 class="text-5xl md:text-6xl font-bold text-slate-800">Transformando Biomassa em Valor</h2>
-                <p class="mt-4 text-lg">O Projeto Cygnus é uma usina de biogás que converte cana-energia em múltiplos produtos de alto valor agregado. Este processo sustentável não só produz energia limpa, mas também cria fontes de receita diversificadas, garantindo a robustez do modelo de negócio.</p>
-            </div>
-            <div class="mt-16 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 text-center">
-                <div class="p-6 bg-white rounded-lg shadow-md border w-full md:w-auto">
-                    <p class="text-2xl font-bold text-green-600">🌿</p>
-                    <p class="mt-2 font-semibold">Cana-Energia</p>
-                </div>
-                <div class="text-3xl font-bold text-slate-400 transform -rotate-90 md:rotate-0">→</div>
-                <div class="p-6 bg-white rounded-lg shadow-md border w-full md:w-auto">
-                    <p class="text-2xl font-bold text-orange-600">⚙️</p>
-                    <p class="mt-2 font-semibold">Biodigestão</p>
-                </div>
-                <div class="text-3xl font-bold text-slate-400 transform -rotate-90 md:rotate-0">→</div>
-                <div class="p-4 bg-slate-100 rounded-lg shadow-inner border w-full md:w-auto">
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="text-center">
-                           <p class="text-2xl font-bold text-blue-600">🔥</p>
-                           <p class="mt-1 font-semibold text-sm">Biometano</p>
-                        </div>
-                        <div class="text-center">
-                           <p class="text-2xl font-bold text-slate-600">💨</p>
-                           <p class="mt-1 font-semibold text-sm">CO2</p>
-                        </div>
-                        <div class="text-center">
-                           <p class="text-2xl font-bold text-yellow-600">♻️</p>
-                           <p class="mt-1 font-semibold text-sm">CBios</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- INVESTMENT & COSTS SECTION -->
-        <section class="py-16 md:py-24 px-8 bg-white">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 max-w-7xl mx-auto items-center">
-                <div>
-                    <h2 class="text-5xl md:text-6xl font-bold text-slate-800">Investimento e Operação</h2>
-                    <p class="mt-4 text-lg">A análise detalha um investimento total de R$ 94,37 milhões, com a maior parte alocada na robusta infraestrutura industrial. Os custos operacionais anuais são otimizados para garantir eficiência e rentabilidade contínuas.</p>
-                </div>
-                <div>
-                    <h3 class="text-3xl font-bold text-center mb-4">Composição do Investimento (CAPEX)</h3>
-                    <div class="chart-container h-[300px] md:h-[350px]">
-                        <canvas id="capexChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- REVENUE & FINANCIALS SECTION -->
-        <section class="py-16 md:py-24 px-8">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center max-w-3xl mx-auto">
-                    <h2 class="text-5xl md:text-6xl font-bold text-slate-800">Projeções Financeiras</h2>
-                    <p class="mt-4 text-lg">As projeções financeiras demonstram um crescimento sólido e consistente. As receitas diversificadas e o fluxo de caixa livre positivo a partir do terceiro ano sublinham a saúde financeira e a sustentabilidade do projeto a longo prazo.</p>
-                </div>
-                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16">
-                    <div>
-                        <h3 class="text-3xl font-bold text-center mb-4">Crescimento da Receita Anual (5 Anos)</h3>
-                        <div class="chart-container h-[400px] md:h-[450px] max-w-full">
-                            <canvas id="revenueChart"></canvas>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-3xl font-bold text-center mb-4">Fluxo de Caixa Livre do Projeto (20 Anos)</h3>
-                        <div class="chart-container h-[400px] md:h-[450px] max-w-full">
-                            <canvas id="cashflowChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
         
-        <!-- RISK ANALYSIS SECTION -->
-        <section class="py-16 md:py-24 px-8 bg-white">
-             <div class="max-w-7xl mx-auto">
-                <div class="text-center max-w-3xl mx-auto">
-                    <h2 class="text-5xl md:text-6xl font-bold text-slate-800">Análise de Risco e Sensibilidade</h2>
-                    <p class="mt-4 text-lg">O projeto foi submetido a rigorosos testes de estresse. A análise de sensibilidade identifica o preço do metano como a variável mais crítica, enquanto a simulação de Monte Carlo confere um alto grau de confiança estatística na viabilidade do projeto.</p>
-                </div>
-                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-start">
-                    <div>
-                        <h3 class="text-3xl font-bold text-center mb-4">Sensibilidade do VPL (Variação de +/- 10%)</h3>
-                        <div class="chart-container h-[400px] max-w-full">
-                            <canvas id="sensitivityChart"></canvas>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-3xl font-bold text-center mb-4">Simulação de Monte Carlo (10.000 Cenários)</h3>
-                        <div class="p-8 bg-slate-100 rounded-lg shadow-inner text-center">
-                            <p class="kpi-title text-4xl text-blue-600">Probabilidade de VPL > 0</p>
-                            <p class="kpi-value text-8xl text-slate-800">61,2%</p>
-                        </div>
-                        <div class="chart-container mt-8 h-[300px] max-w-full">
-                            <canvas id="monteCarloChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+        <div class="chart-container">
+            <canvas id="sensitivityChart"></canvas>
+        </div>
 
-    <!-- FOOTER -->
-    <footer class="w-full bg-slate-900 text-slate-300 p-8 text-center">
-        <p class="font-bold text-white text-xl">PROJETO CYGNUS</p>
-        <p class="text-sm">Análise de Investimento | Julho, 2025</p>
-    </footer>
+        <div class="mt-8 p-4 bg-orange-50 border-l-4 border-orange-400 rounded-r-lg">
+            <h3 class="text-lg font-semibold text-orange-800">Principais Observações</h3>
+            <ul class="list-disc list-inside mt-2 text-orange-700 space-y-1">
+                <li>A <span class="font-bold">TIR (linha verde)</span> cruza a Taxa Mínima de Atratividade (TMA) de 25% quando o preço do metano está abaixo de R$ 2,90, indicando o ponto de atenção para a viabilidade do projeto.</li>
+                <li>O <span class="font-bold">VPL (barras laranjas)</span> torna-se negativo abaixo de R$ 2,85, significando que, a esses preços, o projeto não gera valor acima do custo de oportunidade do capital.</li>
+                <li>O gráfico demonstra a alta alavancagem do projeto ao preço do metano, onde pequenas variações causam impactos significativos nos indicadores de retorno.</li>
+            </ul>
+        </div>
+    </div>
 
     <script>
-        const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value);
-        const formatMillions = (value) => `R$ ${(value / 1e6).toFixed(2).replace('.', ',')} M`;
+        // Dados calculados para a simulação de sensibilidade
+        const methanePrices = ['R$ 2,85', 'R$ 2,90', 'R$ 2,95', 'R$ 3,00', 'R$ 3,05', 'R$ 3,10', 'R$ 3,15'];
+        const vplData = [-1981469, 2878892, 7739253, 12599614, 17219655, 22080016, 26940377];
+        const tirData = [24.17, 26.43, 27.56, 28.69, 29.82, 30.95, 32.08];
+        const tmaLine = Array(methanePrices.length).fill(25.00); // Linha da Taxa Mínima de Atratividade
 
-        const chartTooltipConfig = {
-            callbacks: {
-                title: function(tooltipItems) {
-                    const item = tooltipItems[0];
-                    let label = item.chart.data.labels[item.dataIndex];
-                    return Array.isArray(label) ? label.join(' ') : label;
-                }
-            }
-        };
+        const ctx = document.getElementById('sensitivityChart').getContext('2d');
 
-        // CAPEX CHART
-        new Chart(document.getElementById('capexChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['CAPEX Industrial', 'CAPEX Agrícola'],
-                datasets: [{
-                    data: [83750000, 10624765],
-                    backgroundColor: ['#1e40af', '#16a34a'],
-                    borderColor: '#ffffff',
-                    borderWidth: 4,
-                    hoverOffset: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '60%',
-                plugins: {
-                    legend: { position: 'bottom', labels: { font: { size: 14 }}},
-                    tooltip: { ...chartTooltipConfig, callbacks: { ...chartTooltipConfig.callbacks, label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}` } }
-                }
-            }
-        });
-
-        // REVENUE CHART
-        new Chart(document.getElementById('revenueChart'), {
+        const sensitivityChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Ano 1 (0,5)', 'Ano 2', 'Ano 3', 'Ano 4', 'Ano 5'],
+                labels: methanePrices,
                 datasets: [
-                    { label: 'Biometano (CH4)', data: [18067500, 37941750, 39838838, 41830779, 43922318], backgroundColor: '#1e40af' },
-                    { label: 'CO2', data: [603321, 1414809, 1574378, 1751350, 1946402], backgroundColor: '#64748b' },
-                    { label: 'CBios', data: [913680, 1918728, 2014664, 2115398, 2221168], backgroundColor: '#f59e0b' }
+                    {
+                        label: 'VPL (R$)',
+                        data: vplData,
+                        backgroundColor: '#f97316', // Laranja Cygnus
+                        borderColor: '#ea580c',
+                        borderWidth: 1,
+                        yAxisID: 'y-axis-vpl',
+                        order: 2 // Garante que as barras fiquem atrás da linha
+                    },
+                    {
+                        label: 'TIR (%)',
+                        data: tirData,
+                        type: 'line',
+                        borderColor: '#10b981', // Verde Esmeralda Cygnus
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.1,
+                        fill: false,
+                        yAxisID: 'y-axis-tir',
+                        order: 1 // Garante que a linha fique na frente
+                    },
+                    {
+                        label: 'TMA (25%)',
+                        data: tmaLine,
+                        type: 'line',
+                        borderColor: '#ef4444', // Vermelho para alerta
+                        borderWidth: 2,
+                        borderDash: [5, 5], // Linha tracejada
+                        pointRadius: 0, // Sem pontos na linha
+                        fill: false,
+                        yAxisID: 'y-axis-tir',
+                        order: 0
+                    }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: (val) => formatMillions(val) } } },
-                plugins: {
-                    legend: { position: 'bottom' },
-                    tooltip: { ...chartTooltipConfig, callbacks: { ...chartTooltipConfig.callbacks, label: (ctx) => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` } }
-                }
-            }
-        });
-
-        // CASHFLOW CHART
-        new Chart(document.getElementById('cashflowChart'), {
-            type: 'line',
-            data: {
-                labels: Array.from({length: 22}, (_, i) => `Ano ${i}`),
-                datasets: [{
-                    label: 'Fluxo de Caixa Livre (FCFF)',
-                    data: [0, -65302285, -22998635, 19502958, 20565678, 21685833, 22866946, 24112664, 25426919, 26813856, 28277840, 29823424, 33748257, 35435670, 37207453, 39067826, 41021217, 43072278, 45225892, 47488186, 49865096, 52363350].slice(1),
-                    borderColor: '#1e40af',
-                    backgroundColor: 'rgba(30, 64, 175, 0.1)',
-                    fill: true,
-                    tension: 0.1,
-                    pointBackgroundColor: '#1e40af'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { y: { ticks: { callback: (val) => formatMillions(val) } } },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { ...chartTooltipConfig, callbacks: { ...chartTooltipConfig.callbacks, label: (ctx) => `${ctx.chart.data.labels[ctx.dataIndex]}: ${formatCurrency(ctx.raw)}` } }
-                }
-            }
-        });
-
-        // SENSITIVITY CHART
-        new Chart(document.getElementById('sensitivityChart'), {
-            type: 'bar',
-            data: {
-                labels: [['Preço Metano', '(+10%)'], ['CAPEX Industrial', '(-10%)'], ['Custo Arrendamento', '(-10%)'], ['Custo Arrendamento', '(+10%)'], ['CAPEX Industrial', '(+10%)'], ['Preço Metano', '(-10%)']],
-                datasets: [{
-                    label: 'VPL (R$)',
-                    data: [39240000, 12730000, 6830000, 1870000, -4030000, -30540000],
-                    backgroundColor: d => d.raw >= 0 ? '#16a34a' : '#dc2626',
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { ...chartTooltipConfig, callbacks: { ...chartTooltipConfig.callbacks, label: (ctx) => `Impacto no VPL: ${formatCurrency(ctx.raw)}` } }
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
                 },
-                scales: { x: { ticks: { callback: (val) => formatMillions(val) } } }
-            }
-        });
-
-        // MONTE CARLO CHART
-        new Chart(document.getElementById('monteCarloChart'), {
-            type: 'bar',
-            data: {
-                labels: ['-40 a -30', '-30 a -20', '-20 a -10', '-10 a 0', '0 a 10', '10 a 20', '20 a 30', '30 a 40', '40 a 50+'],
-                datasets: [{
-                    label: 'Frequência de Resultados (VPL em Milhões)',
-                    data: [150, 450, 1100, 2200, 2800, 1800, 900, 450, 150], // Sample data representing the distribution
-                    backgroundColor: '#60a5fa'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, title: { display: true, text: 'Distribuição de Probabilidade do VPL (R$ Milhões)'} },
-                scales: { y: { display: false }, x: { grid: { display: false } } }
+                stacked: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Preço do Metano',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    'y-axis-vpl': {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Valor Presente Líquido (VPL)',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
+                            }
+                        },
+                        grid: {
+                            drawOnChartArea: true, 
+                        }
+                    },
+                    'y-axis-tir': {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Taxa Interna de Retorno (TIR)',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            callback: function(value, index, values) {
+                                return value.toFixed(2) + '%';
+                            }
+                        },
+                        grid: {
+                            drawOnChartArea: false, // Não desenha a grade para o eixo direito para não poluir
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.dataset.yAxisID === 'y-axis-vpl') {
+                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.raw);
+                                } else {
+                                    label += context.raw.toFixed(2) + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'top',
+                    }
+                }
             }
         });
     </script>
